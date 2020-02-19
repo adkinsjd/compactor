@@ -66,8 +66,11 @@ class Context(threading.Thread):
 
     advertise_ip = os.environ.get('LIBPROCESS_ADVERTISE_IP', None)
     try:
-      advertise_port = int(os.environ.get('LIBPROCESS_ADVERTISE_PORT'))
+      advertise_port = int(os.environ.get('LIBPROCESS_ADVERTISE_PORT'),0)
     except ValueError:
+      advertise_port = None
+
+    if advertise_port == 0:
       advertise_port = None
 
     return ip, port, advertise_ip, advertise_port
