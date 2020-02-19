@@ -25,9 +25,9 @@ def encode_request(from_pid, to_pid, method, body=None, content_type=None, legac
   ]
 
   if legacy:
-    headers.append('User-Agent: libprocess/{pid}'.format(pid=from_pid))
+    headers.append('User-Agent: libprocess/{pid}'.format(pid=from_pid.as_advertise_str()))
   else:
-    headers.append('Libprocess-From: {pid}'.format(pid=from_pid))
+    headers.append('Libprocess-From: {pid}'.format(pid=from_pid.as_advertise_str()))
 
   if content_type is not None:
     headers.append('Content-Type: {content_type}'.format(content_type=content_type))

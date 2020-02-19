@@ -66,6 +66,15 @@ class Context(threading.Thread):
     return ip, port
 
   @classmethod
+  def get_advertise_ip_port(cls):
+    ip = os.environ.get('LIBPROCESS_ADVERTISE_IP', None)
+    try:
+      port = int(os.environ.get('LIBPROCESS_ADVERTISE_PORT', None))
+    except ValueError:
+      raise cls.Error('Invalid ip/port provided')
+    return ip, port
+
+  @classmethod
   def singleton(cls, delegate='', **kw):
     with cls._LOCK:
       if cls._SINGLETON:
@@ -100,6 +109,7 @@ class Context(threading.Thread):
     self.__event_loop = loop
     self._ip = None
     ip, port = self.get_ip_port(ip, port)
+    self.advertise_ip, self.advertise_port = self.get_advertise_ip_port()
     self.__sock, self.ip, self.port = self._make_socket(ip, port)
     self._connections = {}
     self._connection_callbacks = defaultdict(list)

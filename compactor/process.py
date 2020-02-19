@@ -124,7 +124,7 @@ class Process(object):
              process is not bound to a context.
     """
     self._assert_bound()
-    return PID(self._context.ip, self._context.port, self.name)
+    return PID(self._context.ip, self._context.port, self.name, self._context.advertise_ip, self._context.advertise_port)
 
   @property
   def context(self):
