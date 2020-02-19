@@ -57,22 +57,20 @@ class Context(threading.Thread):
     return bound_socket, ip, port
 
   @classmethod
-  def get_ip_port(cls, ip=None, port=None):
+  def get_ip_port(cls, ip=None, port=None, advertise_ip=None, advertise_port=None):
     ip = ip or os.environ.get('LIBPROCESS_IP', '0.0.0.0')
     try:
       port = int(port or os.environ.get('LIBPROCESS_PORT', 0))
     except ValueError:
       raise cls.Error('Invalid ip/port provided')
-    return ip, port
 
-  @classmethod
-  def get_advertise_ip_port(cls):
-    ip = os.environ.get('LIBPROCESS_ADVERTISE_IP', None)
+    advertise_ip = os.environ.get('LIBPROCESS_ADVERTISE_IP', None)
     try:
-      port = int(os.environ.get('LIBPROCESS_ADVERTISE_PORT', None))
+      advertise_port = int(os.environ.get('LIBPROCESS_ADVERTISE_PORT', None))
     except ValueError:
       raise cls.Error('Invalid ip/port provided')
-    return ip, port
+
+    return ip, port, advertise_ip, advertise_port
 
   @classmethod
   def singleton(cls, delegate='', **kw):
@@ -85,7 +83,7 @@ class Context(threading.Thread):
         cls._SINGLETON.start()
     return cls._SINGLETON
 
-  def __init__(self, delegate='', loop=None, ip=None, port=None):
+  def __init__(self, delegate='', loop=None, ip=None, port=None, advertise_ip=None, advertise_port=None):
     """Construct a compactor context.
 
     Before any useful work can be done with a context, you must call
@@ -108,8 +106,7 @@ class Context(threading.Thread):
     self.__loop = self.http = None
     self.__event_loop = loop
     self._ip = None
-    ip, port = self.get_ip_port(ip, port)
-    self.advertise_ip, self.advertise_port = self.get_advertise_ip_port()
+    ip, port, self.advertise_ip, self.advertise_port = self.get_ip_port(ip, port, advertise_ip, advertise_port)
     self.__sock, self.ip, self.port = self._make_socket(ip, port)
     self._connections = {}
     self._connection_callbacks = defaultdict(list)
